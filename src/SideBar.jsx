@@ -8,7 +8,7 @@ import { BsPeople } from "react-icons/bs";
 
 //SIDEBAR_WIDTH = 60;
 
-export const SideBar = () => {
+export const SideBar = ({setSideBarId}) => {
   const [activeTab, setActiveTab] = useState("Products");
 
   const menuItems = [
@@ -19,7 +19,12 @@ export const SideBar = () => {
     { id: "analytics", icon: <LuChartColumn />, label: "Analytics" },
     { id: "settings", icon: <LuSettings />, label: "Settings" },
   ];
-  // const clickedPage =
+  
+  const handleActiveTab = (label, id) => {
+    setActiveTab(label);
+    setSideBarId(id)
+  };
+
   return (
     <div className="grid grid-flow-col grid-rows-6 divide-y divide-gray-300 bg-white w-60 h-screen border border-gray-300 ">
       <div className="flex items-center gap-2 px-4">
@@ -33,7 +38,7 @@ export const SideBar = () => {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.label)}
+              onClick={() => handleActiveTab(item.label, item.id)}
               className={`flex items-center gap-2 h-10 border border-transparent rounded-md px-2 ${
                 isActive ? "bg-blue-50 text-blue-600" : ""
               }
@@ -46,7 +51,7 @@ export const SideBar = () => {
         })}
       </div>
 
-      <div className="flex items-center gap-4 p-5">
+      {/* <div className="flex items-center gap-4 p-5">
         <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
           TS
         </div>
@@ -55,7 +60,7 @@ export const SideBar = () => {
           <p className="font-semibold text-gray-900">Tony Stark</p>
           <p className="text-sm text-gray-500">Seller</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import {
-  handleInsertProduct,
+  handleUpdateProduct,
   extractErrorMessage,
 } from "./service/productService";
 import { toast } from "react-toastify";
 
-const InsertFrom = ({ onClose, setReload, reload }) => {
+const UpdateForm = ({ selectedProductData, onClose, setReload, reload }) => {
   const [formData, setFormData] = useState({
-    storeId: "",
-    tenSanPham: "",
-    moTaChiTiet: "",
-    tinhTrang: "New",
-    trongLuong: "",
+    tenSanPham: selectedProductData.Ten_san_pham,
+    moTaChiTiet: selectedProductData.Mo_ta_chi_tiet,
+    tinhTrang: selectedProductData.Tinh_trang,
+    trongLuong: selectedProductData.Trong_luong,
+    trangThaiDang: selectedProductData.Trang_thai_dang,
   });
 
   const handleChange = (e) => {
@@ -24,16 +24,12 @@ const InsertFrom = ({ onClose, setReload, reload }) => {
   };
 
   const handleSubmit = async () => {
-    const payload = {
-      ...formData,
-      storeId: parseInt(formData.storeId),
-      trongLuong: parseFloat(formData.trongLuong),
-    };
-    console.log("Dữ liệu chuẩn sẽ gửi đi:", payload);
-    try {
-      await handleInsertProduct(payload);
+    console.log("Dữ liệu chuẩn sẽ gửi đi:", formData);
 
-      toast.success("Thêm sản phẩm thành công!");
+    try {
+      await handleUpdateProduct(selectedProductData.Product_id, formData);
+
+      toast.success("Sửa sản phẩm thành công!");
       setReload(!reload);
 
       setTimeout(() => {
@@ -81,7 +77,7 @@ const InsertFrom = ({ onClose, setReload, reload }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 z-60 flex justify-center items-center">
       <div className="absolute inset-0 bg-black/30"></div>
 
       <div className="bg-white relative h-4/5 w-1/2 shadow-2xl rounded-xl flex flex-col p-6 animate-scaleIn">
@@ -92,37 +88,22 @@ const InsertFrom = ({ onClose, setReload, reload }) => {
         />
 
         <h1 className="text-4xl font-bold mb-5 text-gray-800 pt-5">
-          Create new product
+          Update product details
         </h1>
 
         <div className="flex flex-col gap-6 flex-1 pt-12 overflow-y-auto">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700 px-1">
-                Product name
-              </label>
-              <input
-                type="text"
-                name="tenSanPham"
-                value={formData.tenSanPham}
-                onChange={handleChange}
-                className="bg-gray-50 py-2 px-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
-                placeholder="Enter product name"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700 px-1">
-                Store ID
-              </label>
-              <input
-                type="number"
-                name="storeId"
-                value={formData.storeId}
-                onChange={handleChange}
-                className="bg-gray-50 py-2 px-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
-                placeholder="Ex: 1"
-              />
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700 px-1">
+              Product name
+            </label>
+            <input
+              type="text"
+              name="tenSanPham"
+              value={formData.tenSanPham}
+              onChange={handleChange}
+              className="bg-gray-50 py-2 px-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+              placeholder="Enter product name"
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -184,10 +165,10 @@ const InsertFrom = ({ onClose, setReload, reload }) => {
             Cancel
           </button>
           <button
-            className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-medium transition-colors shadow-sm hover:scale-110 cursor-pointer"
+            className="px-6 py-2 rounded-xl bg-orange-600 text-white hover:bg-orange-700 font-medium transition-colors shadow-sm hover:scale-110 cursor-pointer"
             onClick={handleSubmit}
           >
-            Create
+            Update
           </button>
         </div>
       </div>
@@ -195,4 +176,4 @@ const InsertFrom = ({ onClose, setReload, reload }) => {
   );
 };
 
-export default InsertFrom;
+export default UpdateForm;

@@ -31,6 +31,21 @@ export const handleInsertProduct = async (productData) => {
   }
 };
 
+//update
+export const handleUpdateProduct = async (productId, productData) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:8080/api/products/${productId}`,
+      productData
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi sửa:", error);
+    throw error;
+  }
+};
+
 //delete
 export const handleDeleteProduct = async (productId) => {
   try {
@@ -41,6 +56,21 @@ export const handleDeleteProduct = async (productId) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi xóa:", error);
+    throw error;
+  }
+};
+
+//search
+export const handleSearchProduct = async (productData) => {
+  try {
+    const response = await axios.get(
+      "http://localhost:8080/api/products/search",
+      { params: productData }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu:", error);
     throw error;
   }
 };
