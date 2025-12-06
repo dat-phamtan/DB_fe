@@ -63,6 +63,7 @@ export const ProductDetail = ({ listProducts, setReload, reload }) => {
 
   // fetch detail from backend and map to Variants expected shape
 
+
   const openDetail = async (product) => {
     try {
       const storeId = product.Store_id ?? product.StoreId ?? product.storeId ?? null;
@@ -72,60 +73,113 @@ export const ProductDetail = ({ listProducts, setReload, reload }) => {
 
       // ========== FIXED IMAGE PATH PROCESSING ==========
       const imagesRows = data.images || [];
-      const images_path = imagesRows.map((row) => {
-        if (!row) return null;
-        
-        // Tìm key chứa đường dẫn ảnh - BỔ SUNG "duong" và "dan"
-        const keys = Object.keys(row);
-        const imgKey = keys.find((k) => 
-          /anh|image|path|url|duong|dan/i.test(k)
-        );
-        
-        let imgPath = imgKey ? row[imgKey] : row[keys[0]];
-        
-        if (!imgPath || typeof imgPath !== 'string') return null;
-        
-        // Xử lý đường dẫn ảnh
-        // Loại bỏ "../" và các ký tự đặc biệt
-        let filename = imgPath
-          .replace(/^\.\.\//, '')  // Loại bỏ "../" ở đầu
-          .split(/[\/\\]/)         // Tách theo / hoặc \
-          .pop()                   // Lấy phần cuối (tên file)
-          .trim();
-        
-        if (!filename) return null;
-        
-        // Chuẩn hóa tên file - chuyển thành lowercase để dễ so khớp
-        const normalizedFilename = filename.toLowerCase();
-        
-        // Map các extension có thể có
-        const possibleExtensions = [
-          '.jpg', '.jpeg', '.png', '.gif', '.jfif', '.jiff', '.webp', '.bmp'
-        ];
-        
-        // Kiểm tra xem file có extension hợp lệ không
-        const hasValidExt = possibleExtensions.some(ext => 
-          normalizedFilename.endsWith(ext)
-        );
-        
-        if (!hasValidExt) {
-          // Nếu không có extension, thử thêm .jpg
-          filename = `${filename}.jpg`;
-        }
-        
-        // Tạo đường dẫn cuối cùng
-        const finalPath = `/images/${filename}`;
-        
-        console.log(`✅ Image mapping: ${imgPath} -> ${finalPath}`);
-        return finalPath;
-        
-      }).filter(Boolean);
+      
+      console.log('🔍 Starting to process images...');
+      console.log('Images rows received:', imagesRows);
+      
+      const images_path = imagesRows
+        .map((row, index) => {
+          console.log(`\n--- Processing image ${index + 1} ---`);
+          console.log('Row data:', row);
+          
+          if (!row || typeof row !== 'object') {
+            console.log('❌ Row is null/undefined or not an object');
+            return null;
+          }
+          
+          // ✅ TÌM KEY CHỨA ĐƯỜNG DẪN ẢNH (ƯU TIÊN THEO THỨ TỰ)
+          const keys = Object.keys(row);
+          console.log('Available keys:', keys);
+          
+          // Danh sách key ưu tiên theo thứ tự
+          const priorityKeys = [
+            'Duong_dan_anh',
+            'duong_dan_anh', 
+            'DuongDanAnh',
+            'imagePath',
+            'image_path',
+            'ImagePath',
+            'path',
+            'Path',
+            'url',
+            'Url',
+            'URL'
+          ];
+          
+          // Tìm key theo thứ tự ưu tiên
+          let imgKey = null;
+          for (const key of priorityKeys) {
+            if (keys.includes(key)) {
+              imgKey = key;
+              break;
+            }
+          }
+          
+          // Nếu không tìm thấy, tìm key chứa từ khóa
+          if (!imgKey) {
+            imgKey = keys.find((k) => 
+              /anh|image|path|url|duong|dan/i.test(k) && 
+              typeof row[k] === 'string' // ✅ BẮT BUỘC PHẢI LÀ STRING
+            );
+          }
+          
+          console.log('Found image key:', imgKey);
+          
+          let imgPath = imgKey ? row[imgKey] : null;
+          
+          console.log('Image path extracted:', imgPath);
+          
+          // ✅ KIỂM TRA imgPath PHẢI LÀ STRING VÀ KHÔNG RỖNG
+          if (!imgPath || typeof imgPath !== 'string' || imgPath.trim() === '') {
+            console.log('❌ Image path is invalid:', typeof imgPath, imgPath);
+            return null;
+          }
+          
+          // Xử lý đường dẫn ảnh
+          let filename = imgPath
+            .replace(/^\.\.\//, '')  // Loại bỏ "../" ở đầu
+            .replace(/^\.\//, '')    // Loại bỏ "./" ở đầu
+            .split(/[\/\\]/)         // Tách theo / hoặc \
+            .pop()                   // Lấy phần cuối (tên file)
+            .trim();
+          
+          console.log('Extracted filename:', filename);
+          
+          if (!filename) {
+            console.log('❌ Filename is empty');
+            return null;
+          }
+          
+          // Chuẩn hóa extension
+          const possibleExtensions = [
+            '.jpg', '.jpeg', '.png', '.gif', '.jfif', '.jiff', '.webp', '.bmp'
+          ];
+          
+          const hasValidExt = possibleExtensions.some(ext => 
+            filename.toLowerCase().endsWith(ext)
+          );
+          
+          if (!hasValidExt) {
+            console.log('⚠️ No valid extension, adding .jpg');
+            filename = `${filename}.jpg`;
+          }
+          
+          // Tạo đường dẫn cuối cùng
+          const finalPath = `/images/${filename}`;
+          
+          console.log(`✅ Final path: ${finalPath}`);
+          return finalPath;
+          
+        })
+        .filter(Boolean); // ✅ Loại bỏ null/undefined
 
-      console.log(`📸 Total images processed: ${images_path.length}`);
+      console.log('\n📸 FINAL RESULT:');
+      console.log('Total images processed:', images_path.length);
       console.log('Images paths:', images_path);
 
-      // Nếu không có ảnh nào, dùng ảnh đại diện từ product
+      // ✅ NẾU KHÔNG CÓ ẢNH, DÙNG ẢNH ĐẠI DIỆN
       if (images_path.length === 0 && product.Anh_dai_dien) {
+        console.log('⚠️ No images found, using representative image');
         const representativeImg = product.Anh_dai_dien;
         if (typeof representativeImg === 'string') {
           const filename = representativeImg.split(/[\/\\]/).pop();
@@ -134,9 +188,14 @@ export const ProductDetail = ({ listProducts, setReload, reload }) => {
           }
         }
       }
+      
+      // ✅ NẾU VẪN KHÔNG CÓ ẢNH, DÙNG PLACEHOLDER
+      if (images_path.length === 0) {
+        images_path.push('/images/placeholder.jpg');
+      }
       // ========== END FIXED IMAGE PATH PROCESSING ==========
 
-      // map variants (support backend column names: Gia_ban, So_luong_ton_kho)
+      // ... rest of the code
       const variantRows = data.variants || [];
       const variants = variantRows.map((r) => {
         const priceRaw = r.Gia_ban ?? r.Gia ?? r.price ?? r.Price ?? r.Don_gia ?? r['Giá'];
@@ -157,14 +216,14 @@ export const ProductDetail = ({ listProducts, setReload, reload }) => {
         product_id: product.Product_id,
         name,
         detail,
-        images_path: images_path.length ? images_path : ['/images/placeholder.jpg'],
+        images_path, // ✅ Đã xử lý đúng
         variants: variants.length ? variants : [],
       };
 
+      console.log('📦 Final mappedVariantData:', mappedVariantData);
+
       setSelectedVariantData(mappedVariantData);
       
-      // merge product info: prefer API product object, fall back to listProducts row
-      // also attach reviews and categories returned as separate result sets
       const productDataMerged = prod && Object.keys(prod).length ? { ...product, ...prod } : { ...product };
       productDataMerged.reviews = data.reviews || [];
       productDataMerged.categories = data.categories || [];
