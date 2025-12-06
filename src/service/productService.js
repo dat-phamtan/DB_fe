@@ -74,3 +74,21 @@ export const handleSearchProduct = async (productData) => {
     throw error;
   }
 };
+
+// get product detail by id (calls backend stored procedure that returns multiple resultsets)
+export const getProductDetail = async (productId, storeId = null) => {
+  try {
+    const params = {};
+    if (storeId !== null && storeId !== undefined) params.storeId = storeId;
+
+    const response = await axios.get(
+      `http://localhost:8080/api/products/${productId}/detail`,
+      { params }
+    );
+    console.log("Product detail:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
+    throw error;
+  }
+};
