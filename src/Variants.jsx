@@ -199,7 +199,7 @@ const Variants = ({
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
                 </svg>
-                Click để phóng to
+                Click to Zoom
               </div>
 
               {/* Navigation Arrows - Only show if multiple images */}
@@ -292,20 +292,20 @@ const Variants = ({
             {/* Product Meta Info */}
             <div className="bg-gray-50 p-3 rounded-lg space-y-1 text-sm">
               <p>
-                <span className="text-gray-600">Khối lượng:</span>{" "}
+                <span className="text-gray-600">Weight:</span>{" "}
                 <span className="font-medium">
                   {selectedProductData.Trong_luong || selectedProductData.trongLuong || "N/A"} kg
                 </span>
               </p>
               <p>
-                <span className="text-gray-600">Ngày đăng:</span>{" "}
+                <span className="text-gray-600">Date:</span>{" "}
                 <span className="font-medium">{formatDate(postDate)}</span>
               </p>
             </div>
 
             {/* VARIANTS SECTION */}
             <div className="space-y-3">
-              <h2 className="font-bold text-lg">Chi tiết phân loại</h2>
+              <h2 className="font-bold text-lg">Details</h2>
               {selectedVariantData.variants && selectedVariantData.variants.length > 0 ? (
                 <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                   {selectedVariantData.variants.map((variant, index) => (
@@ -318,7 +318,7 @@ const Variants = ({
                           <p className="font-semibold text-sm text-blue-600">
                             {variant.SKU}
                           </p>
-                          <p className="text-gray-600 text-xs">Mã sản phẩm</p>
+                          <p className="text-gray-600 text-xs">SKU</p>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-bold text-red-600">
@@ -329,18 +329,18 @@ const Variants = ({
 
                       <div className="grid grid-cols-2 gap-2 text-sm mb-2">
                         <div>
-                          <p className="text-gray-600">Màu sắc</p>
+                          <p className="text-gray-600">Color</p>
                           <p className="font-medium">{variant.color}</p>
                         </div>
                         <div>
-                          <p className="text-gray-600">Kích thước</p>
+                          <p className="text-gray-600">Size</p>
                           <p className="font-medium">{variant.size}</p>
                         </div>
                       </div>
 
                       <div className="border-t pt-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Tồn kho:</span>
+                          <span className="text-gray-600">Inventory:</span>
                           <span
                             className={`font-semibold ${
                               variant.stock > 0
@@ -349,7 +349,7 @@ const Variants = ({
                             }`}
                           >
                             {variant.stock > 0
-                              ? `${variant.stock} sản phẩm`
+                              ? `${variant.stock} products`
                               : "Hết hàng"}
                           </span>
                         </div>
@@ -367,7 +367,7 @@ const Variants = ({
             {/* REVIEWS SECTION */}
             {reviews && reviews.length > 0 && (
               <div className="space-y-3 border-t pt-4">
-                <h2 className="font-bold text-lg">Đánh giá từ khách hàng</h2>
+                <h2 className="font-bold text-lg">Customer Reviews</h2>
                 <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                   {reviews.slice(0, 5).map((review, index) => (
                     <div
@@ -390,7 +390,7 @@ const Variants = ({
                             ))}
                           </div>
                           <span className="font-medium text-xs text-gray-600">
-                            ({review.So_sao} sao)
+                            ({review.So_sao} stars)
                           </span>
                         </div>
                         <span className="text-xs text-gray-500">
