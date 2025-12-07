@@ -402,7 +402,7 @@ const Variants = ({
                       </p>
                       {review.Kich_thuoc && (
                         <p className="text-xs text-gray-500">
-                          Variant: {review.Kich_thuoc}
+                          Variant: {review.SKU}
                         </p>
                       )}
                     </div>

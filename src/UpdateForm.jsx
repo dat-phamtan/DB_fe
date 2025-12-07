@@ -31,10 +31,6 @@ const UpdateForm = ({ selectedProductData, onClose, setReload, reload }) => {
 
       toast.success("Sửa sản phẩm thành công!");
       setReload(!reload);
-
-      setTimeout(() => {
-        onClose();
-      }, 1000);
     } catch (error) {
       if (error.response) {
         const rawData = error.response.data;
@@ -44,6 +40,9 @@ const UpdateForm = ({ selectedProductData, onClose, setReload, reload }) => {
         toast.error("Không kết nối được Server!");
       }
     }
+    setTimeout(() => {
+      onClose();
+    }, 1000);
   };
 
   useEffect(() => {
